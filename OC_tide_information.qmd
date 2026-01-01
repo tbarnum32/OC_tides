@@ -29,10 +29,10 @@ OceanCity2024 <- noaa(begindate = 20240101, enddate = 20251030,
 The `echo: false` option disables the printing of code (only output is displayed). Import data from the NOAA website for Ocean City, MD in 2024.
 
 ```{r}
-head(OceanCity2025)
-dim(OceanCity2025)
-class(OceanCity2025)
-OceanCity2024 <- OceanCity2025
+head(OceanCity2024)
+dim(OceanCity2024)
+class(OceanCity2024)
+
 ```
 
 Initially named 2025, needs to be 2024. 2025 gave me an error about invalid time intervals, so I think the 2025 is incomplete - shows December data as 'preliminary' on the website. There are 87,840 rows of data and it is stored in a data frame, not a tibble.
