@@ -1,0 +1,46 @@
+---
+title: "Tides at Ocean City"
+format: pdf
+editor: visual
+---
+
+## Quarto
+
+Quarto enables you to weave together content and executable code into a finished document. To learn more about Quarto see <https://quarto.org>.
+
+## Running Code
+
+When you click the **Render** button a document will be generated that includes both content and the output of embedded code. You can embed code like this:
+
+```{r}
+library(VulnToolkit)
+library(ggplot2)
+library(dplyr)
+```
+
+You can add options to executable code like this
+
+```{r}
+#| echo: false
+OceanCity2024 <- noaa(begindate = 20240101, enddate = 20251030, 
+  station = "8570283", interval = "6 minute")
+```
+
+The `echo: false` option disables the printing of code (only output is displayed). Import data from the NOAA website for Ocean City, MD in 2024.
+
+```{r}
+head(OceanCity2025)
+dim(OceanCity2025)
+class(OceanCity2025)
+OceanCity2024 <- OceanCity2025
+```
+
+Initially named 2025, needs to be 2024. 2025 gave me an error about invalid time intervals, so I think the 2025 is incomplete - shows December data as 'preliminary' on the website. There are 87,840 rows of data and it is stored in a data frame, not a tibble.
+
+```{r}
+# Rename column heads for simplicity purposes
+colnames(OceanCity2024) <- c("Date", "Meters", "Station")
+ggplot(OceanCity2024, aes(x = Date, y = Meters))+
+  geom_point()+
+  theme_bw()
+```
