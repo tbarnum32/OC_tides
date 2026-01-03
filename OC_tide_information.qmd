@@ -16,6 +16,8 @@ When you click the **Render** button a document will be generated that includes 
 library(VulnToolkit)
 library(ggplot2)
 library(dplyr)
+library(tswge)
+library(smooth)
 ```
 
 You can add options to executable code like this
@@ -40,7 +42,36 @@ Initially named 2025, needs to be 2024. 2025 gave me an error about invalid time
 ```{r}
 # Rename column heads for simplicity purposes
 colnames(OceanCity2024) <- c("Date", "Meters", "Station")
-ggplot(OceanCity2024, aes(x = Date, y = Meters))+
+OC.plot <- ggplot(OceanCity2024, aes(x = Date, y = Meters))+
+  geom_line(color = "gray") +
   geom_point()+
   theme_bw()
+OC.plot
 ```
+
+I have been reading Time Series for Data Science
+
+```{r}
+#Smooth the time series data
+OC.2024.ts <- structure(OceanCity2024$Meters, class = "ts")
+
+moving_average <- function(x, n) {             # Create a function
+  stats::filter(x, rep(1 / n, n), sides = 2)
+}
+
+f.hat.5 <- moving_average(OC.2024.ts, n = 5)
+f.hat.100 <- moving_average(OC.2024.ts, n = 100)
+OC.plot + geom_line(aes(y = f.hat), color = "blue")
+
+OC.plot.truncated <- ggplot(OceanCity2024[1:500,], aes(x = Date, y = Meters))+
+  geom_line(color = "gray") +
+  geom_point()+
+  theme_bw()
+
+OC.plot.truncated + geom_line(aes(y = f.hat.5[1:500]), color = "deepskyblue") +
+  geom_line(aes(y = f.hat.100[1:500]), color = "deeppink")
+#OC.tides.6 <- sma(OC.2024.ts, h = 18, silent = FALSE)
+
+```
+
+Water measurements are taken every six minutes, so it is difficult to see how the moving average smooths the time series across almost two years. Therefore, the first two full days were plotted to visually compare moving averages wth different window sizes. The function code was modified from this [blog](https://statisticsglobe.com/moving-average-maximum-median-sum-of-time-series-in-r).
